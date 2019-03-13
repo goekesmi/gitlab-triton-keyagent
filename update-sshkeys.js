@@ -10,6 +10,33 @@ var gitlabconfig = require( "./gitlabconfig.json" )
 
 const api = new Gitlab(gitlabconfig )
 
+// Expands group listings to users, and adds each user to the userlist on the in memory structure
+function ExpandProjects(hostconfig) {
+	gitlabprojects = api.Projects.all()
+	.then( (gitlabprojects) => {
+		// Reduce the list of projects to the projects I've selected.
+		const selectedprojects = gitlabprojects.filter( function(element) { return hostconfig.projects.indexOf(element.name) >= 0; }); 
+
+		// There may be more than one project, Generate a list of jobs to 
+		// get each group membership and add it to the list.  Parallel and async.
+		var jobs = selectedprojects.map( function (project) {
+				return api.ProjectMembers.all(project.name)
+					.then( (members) => {
+					members.forEach( function(member) { hostconfig.users.push(member.username) })
+					})
+				})
+		// Dispatch the jobs, wait for all to complete.
+		Promise.all(jobs).then( (result) => { 
+			// Deduplicate the listing os users
+			hostconfig.users = Array.from(new Set (hostconfig.users));
+			hostconfig.expandprojectsdone=true;
+			// go add the users in the Groups 
+			ExpandGroups(hostconfig);
+		})
+
+	})
+
+}
 
 // Expands group listings to users, and adds each user to the userlist on the in memory structure
 function ExpandGroups(hostconfig) {
@@ -77,7 +104,7 @@ function GenerateAuthorizedKeys(hostconfig) {
 
 
 config.forEach( function(host) { 
-	ExpandGroups(host) 
+	ExpandProjects(host) 
 	});
 
 
