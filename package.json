@@ -1,0 +1,14 @@
+{
+  "name": "gitlab-triton-keyagent",
+  "version": "1.0.0",
+  "description": "Tool to managage ssh authorized_keys files with gitlab and triton",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jeff Goeke-Smith",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "gitlab": "^4.4.1"
+  }
+}
