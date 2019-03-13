@@ -1,0 +1,37 @@
+[
+  {
+    "host": "host1",
+    "username": "root",
+    "users": [
+      "user1",
+      "user2"
+    ],
+    "groups": [
+      "agroup",
+      "anothergroup"
+    ],
+    "projects": [
+      "project-1"
+    ]
+  },
+  {
+    "host": "host2",
+    "username": "admin",
+    "users": [],
+    "groups": [
+      "gitlab"
+    ],
+    "projects": []
+  },
+  {
+    "host": "host3",
+    "username": "node",
+    "users": [],
+    "groups": [
+      ""
+    ],
+    "projects": [
+      "example"
+    ]
+  }
+]
