@@ -10,6 +10,15 @@ var gitlabconfig = require( "./gitlabconfig.json" )
 
 const api = new Gitlab(gitlabconfig )
 
+function FillOutConfig(hostconfig) {
+	if ( typeof hostconfig.keys == 'undefined' ) 		{ hostconfig.keys =[];}
+	if ( typeof hostconfig.groups == 'undefined' ) 		{ hostconfig.groups =[];}
+	if ( typeof hostconfig.groups_owners == 'undefined' ) 	{ hostconfig.groups_owners =[];}
+	if ( typeof hostconfig.users == 'undefined' ) 		{ hostconfig.users =[];}
+	ExpandProjects(hostconfig) 
+
+}
+
 // Expands group listings to users, and adds each user to the userlist on the in memory structure
 function ExpandProjects(hostconfig) {
 	gitlabprojects = api.Projects.all()
@@ -51,6 +60,36 @@ function ExpandGroups(hostconfig) {
 				return api.GroupMembers.all(group.name)
 					.then( (members) => {
 					members.forEach( function(member) { hostconfig.users.push(member.username) })
+					})
+				})
+		// Dispatch the jobs, wait for all to complete.
+		Promise.all(jobs).then( (result) => { 
+			// Deduplicate the listing os users
+			hostconfig.users = Array.from(new Set (hostconfig.users));
+			hostconfig.expandgroupdone=true;
+			// go add the listing of keys for this host
+			ExpandGroupsOwners(hostconfig);
+		})
+
+	})
+
+}
+
+// Expands group listings to users, and adds each user to the userlist on the in memory structure
+// This adds a filter for group members that are at level 50, aka owner
+function ExpandGroupsOwners(hostconfig) {
+	gitlabgroups = api.Groups.all()
+	.then( (gitlabgroups) => {
+		// Reduce the list of groups to the groups I've selected.
+		const selectedgroups = gitlabgroups.filter( function(element) { return hostconfig.groups_owners.indexOf(element.name) >= 0; }); 
+
+		// There may be more than one group, Generate a list of jobs to 
+		// get each group membership and add it to the list.  Parallel and async.
+		var jobs = selectedgroups.map( function (group) {
+				return api.GroupMembers.all(group.name)
+					.then( (members) => {
+					members.forEach( function(member) { 
+						if (member.access_level == 50 ) {hostconfig.users.push(member.username)} })
 					})
 				})
 		// Dispatch the jobs, wait for all to complete.
@@ -104,7 +143,7 @@ function GenerateAuthorizedKeys(hostconfig) {
 
 
 config.forEach( function(host) { 
-	ExpandProjects(host) 
+	FillOutConfig(host) 
 	});
 
 
