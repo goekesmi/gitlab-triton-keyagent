@@ -12,6 +12,7 @@ const api = new Gitlab(gitlabconfig )
 
 function FillOutConfig(hostconfig) {
 	if ( typeof hostconfig.keys == 'undefined' ) 		{ hostconfig.keys =[];}
+	if ( typeof hostconfig.projects == 'undefined' ) 	{ hostconfig.projects =[];}
 	if ( typeof hostconfig.groups == 'undefined' ) 		{ hostconfig.groups =[];}
 	if ( typeof hostconfig.groups_owners == 'undefined' ) 	{ hostconfig.groups_owners =[];}
 	if ( typeof hostconfig.users == 'undefined' ) 		{ hostconfig.users =[];}
