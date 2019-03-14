@@ -69,7 +69,7 @@ function ExpandGroups(hostconfig) {
 
 // Adds the keys for the listed users to the hostconfig.
 function AddKeys(hostconfig) {
-	hostconfig.keys =[];
+	if ( typeof hostconfig.keys == 'undefined' ) { hostconfig.keys =[];}
 	gitlabusers = api.Users.all()
 	.then( (gitlabusers) => {
 		// Only use the users listed, and only if they are set to 'active'
