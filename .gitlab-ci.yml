@@ -4,3 +4,4 @@ before_script:
 generate-keyfiles:
    script:
     - npm install
+    - npm show
