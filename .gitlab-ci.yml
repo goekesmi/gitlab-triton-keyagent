@@ -2,4 +2,5 @@ before_script:
     - touch /tmp/file
     
 generate-keyfiles:
+   script:
     - echo "Generate files here."
