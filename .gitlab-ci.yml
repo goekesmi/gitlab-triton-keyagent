@@ -3,4 +3,4 @@ before_script:
     
 generate-keyfiles:
    script:
-    - echo "Generate files here."
+    - npm install
