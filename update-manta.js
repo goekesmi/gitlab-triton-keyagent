@@ -77,6 +77,17 @@ mantakeys.users.forEach(function(m) {
 
 });
 // For each user delete keys that don't exist in my configuration
+mantakeys.users.forEach(function(m) {
+	client.listUserKeys(m, function(err,keys) {
+		if (err) {
+        		console.log('err: ' + err);
+                       	return;
+			}
+		console.log( keys )
+
+	})
+} );
+
 // For each user add keys that exist in my configuration
 mantakeys.users.forEach(function(m) {
 	client.getUser(m, function(err,user) {
