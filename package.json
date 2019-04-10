@@ -9,6 +9,7 @@
   "author": "Jeff Goeke-Smith",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "gitlab": "^4.4.1"
+    "gitlab": "^4.5.1",
+    "smartdc": "^9.0.0"
   }
 }
