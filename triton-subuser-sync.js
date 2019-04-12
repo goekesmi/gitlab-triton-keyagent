@@ -96,8 +96,7 @@ mantakeys.users.forEach(function(m) {
                        	return;
 			}
 		console.log( mantakeys.subuserkeys )
-		if( typeof mantakeys.subuserkeys[m] !== 'undefined' ) {
-		mantakeys.subuserkeys[m].forEach(function(key) {
+		mantakeys.subuserkeys[m].keys.forEach(function(key) {
 			client.uploadUserKey(user, {'key': key }, 
 				function(err,key) {
 				if (err) {
@@ -107,7 +106,6 @@ mantakeys.users.forEach(function(m) {
 				console.log('key ' + key );	}
 				) } )
 				return;
-				}
                         } )
 
 	})

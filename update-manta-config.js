@@ -117,10 +117,11 @@ function AddKeys(hostconfig) {
 		// Job to go get each user's keys and add them to the key list.
 	        	
 		var jobs = selectedusers.map( function (user) {
-				hostconfig.subuserkeys[user.username]= [];
+				hostconfig.subuserkeys[user.username]= {};
+				hostconfig.subuserkeys[user.username].keys= [];
 				return api.UserKeys.all({userId: user.id} )
 					.then((keys) => {
-					keys.forEach( function(e) { hostconfig.subuserkeys[user.username].push(e.key)  });
+					keys.forEach( function(e) { hostconfig.subuserkeys[user.username].keys.push(e.key)  });
 					}) } );
 		// Dispatch all jobs and wait for them to complete.
 		Promise.all(jobs).then( (result) => {
