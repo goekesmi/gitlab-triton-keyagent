@@ -1,0 +1,11 @@
+#!/bin/bash
+
+for user in `sdc-user list | json -a login`
+	do 
+	echo $user;
+	for key in `sdc-user keys $user | json -a fingerprint`
+		do 
+		sdc-user delete-key $user $key
+	done;
+	sdc-user delete $user
+done;
