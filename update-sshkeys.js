@@ -33,13 +33,13 @@ function ExpandProjects(hostconfig) {
   gitlabprojects = api.Projects.all().then(gitlabprojects => {
     // Reduce the list of projects to the projects I've selected.
     const selectedprojects = gitlabprojects.filter(function(element) {
-      return hostconfig.projects.indexOf(element.name) >= 0;
+      return hostconfig.projects.indexOf(element.path_with_namespace) >= 0;
     });
 
     // There may be more than one project, Generate a list of jobs to
-    // get each group membership and add it to the list.  Parallel and async.
+    // get each project  membership and add it to the list.  Parallel and async.
     var jobs = selectedprojects.map(function(project) {
-      return api.ProjectMembers.all(project.name).then(members => {
+      return api.ProjectMembers.all( project.path_with_namespace ).then(members => {
         members.forEach(function(member) {
           hostconfig.users.push(member.username);
         });
@@ -110,9 +110,32 @@ function ExpandGroupsOwners(hostconfig) {
       hostconfig.users = Array.from(new Set(hostconfig.users));
       hostconfig.expandgroupdone = true;
       // go add the listing of keys for this host
-      AddKeys(hostconfig);
+      SplitUsersOut(hostconfig);
     });
   });
+}
+function SplitUsersOut(hostconfig) {
+	// If the host requests usersplit, spawn a new config for each username
+	hostconfig.splitusers="done"
+	var manyconfigs = []
+	if (hostconfig.usersplit ) {
+		hostconfig.users.forEach( function (e) {
+			manyconfigs.push( {} )
+			userhost = manyconfigs[manyconfigs.length - 1]
+			userhost.host = hostconfig.host
+			userhost.users = [ e ]
+			userhost.username = e
+			})
+		}
+	else {
+		manyconfigs.push(JSON.parse(JSON.stringify(hostconfig)))
+		}
+
+	manyconfigs.forEach( function (e) {
+		let item = e
+		AddKeys(item)	
+		})
+
 }
 
 // Adds the keys for the listed users to the hostconfig.
